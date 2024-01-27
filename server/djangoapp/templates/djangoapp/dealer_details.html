@@ -10,6 +10,42 @@
     <body>
 
     <!--Add a nav bar here -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+    
+                <div class="input-group">
+                    {% if user.is_authenticated %}
+                    <a class="btn btn-link" href="{% url 'djangoapp:add_review' dealer.id %}">Add Review</a>
+                        <!-- Display user's first name or username -->
+                        <span class="navbar-text">{{ user.username }}</span>
+    
+                        <!-- Signout button/link -->
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+    
+                        <!-- Add any other authenticated user-specific items here -->
+                    {% else %}
+                        <!-- Login and Signup form -->
+                        <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                            {% csrf_token %}   
+                            <input type="text" class="form-control" placeholder="Username" name="username">
+                            <input type="password" class="form-control" placeholder="Password" name="psw">
+                            <button class="btn btn-primary" type="submit">Login</button>
+                        </form>  
+                        
+                        <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                    {% endif %}
+    
+                    <!-- Common navigation item -->
+                    <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                </div>
+    
+            </ul>
+        </div>
+    </nav>
 
     <!-- Add reviews as cards -->
 

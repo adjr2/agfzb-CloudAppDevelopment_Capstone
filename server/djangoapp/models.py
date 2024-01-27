@@ -64,3 +64,6 @@ class DealerReview:
         self.car_year = car_year
         self.sentiment = sentiment
         self.id = id
+
+    def __str__(self):
+        return f"{self.name}'s Review for {self.dealership} ({self.car_make} {self.car_model} {self.car_year})"

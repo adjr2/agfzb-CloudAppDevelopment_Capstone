@@ -4,13 +4,128 @@
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap-datepicker CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
+    <!-- Bootstrap-datepicker JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
+    <title>Add Review</title>
+    <style>
+        body {
+            padding: 20px;
+        }
+        h1 {
+            color: #007bff;
+            font-size: 40px;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        textarea {
+            resize: vertical;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
 </head>
-    <body>
-    <!--Add review form here -->
-    </body>
+<body>
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="{% url 'djangoapp:index' %}">Best Cars</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+    
+                <div class="input-group">
+                    {% if user.is_authenticated %}
+                        <!-- Display user's first name or username -->
+                        <span class="navbar-text">{{ user.username }}</span>
+    
+                        <!-- Signout button/link -->
+                        <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+    
+                        <!-- Add any other authenticated user-specific items here -->
+                    {% else %}
+                        <!-- Login and Signup form -->
+                     <form class="form-inline" action="{% url 'djangoapp:login' %}"  method="post">
+                        {% csrf_token %}   
+                        <input type="text" class="form-control" placeholder="Username" name="username">
+                        <input type="password" class="form-control" placeholder="Password" name="psw">
+                        <button class="btn btn-primary" type="submit">Login</button>
+                      </form>  
+                    
+                        <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                    {% endif %}
+    
+                    <!-- Common navigation item -->
+                    <a class="btn btn-link" href="{% url 'djangoapp:about' %}">About Us</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:contact-us' %}">Contact Us</a>
+                </div>
+    
+            </ul>
+        </div>
+    </nav>
+
+<div class="container ml-auto">
+    <h1 class="mt-5">Add Review for {{ dealer.full_name }}</h1>
+
+    <form method="post" action="{% url 'djangoapp:add_review' dealer_id=dealer.id %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="car">Select your Car:</label>
+            <select class="form-select" name="car" id="dealer_id" required>
+                {% for car in cars %}
+                    <option value="{{ car.id }}">{{ car.name }} - {{ car.make.name }} - {{ car.year|date:"Y" }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-group col-md-8">
+            <label for="content">Enter the review content:</label>
+            <textarea class="form-control" name="content" id="content" rows="1" required></textarea>
+        </div>
+
+        <div class="form-group col-md-12">
+            <div class="form-check form-check-inline ml-2">
+                <input class="form-check-input" type="checkbox" name="purchasecheck" id="purchasecheck">
+            </div>
+            <label class="form-check-label d-inline" for="purchasecheck">Has purchased the car from {{ dealer.full_name }} </label> <p class="grey d-inline" > (select purchased car information below if checked) </p>
+
+        </div>
+        <div class="col-md-4">
+        <div class="form-group">
+            <label for="purchasedate">Select your purchase Date:</label>
+            <div class="input-group date">
+                <input type="text" class="form-control datepicker" name="purchasedate" autocomplete="off" required>
+            </div>
+        </div>
+    </div>
+
+        <input type="submit" class="btn btn-primary" value="Submit Review">
+    </form>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true
+        });
+    });
+</script>
+
+
+</body>
+
 </html>
