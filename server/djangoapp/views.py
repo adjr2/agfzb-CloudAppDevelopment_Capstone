@@ -136,3 +136,32 @@ def add_review(request, dealer_id):
         # append the cars to context
         context["cars"] = cars
         return render(request, 'djangoapp/add_review.html', context)
+    
+    if request.method == "POST":
+        # check if the user is authenticated
+        if request.user.is_authenticated:
+            url = "https://dhirajupadhy-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+            username = request.user.username
+            # check if the user bought a car from the dealer
+            if 'purchasecheck' in request.POST:
+                was_purchased = True
+            else:
+                was_purchased = False
+
+            car_id = request.POST["car"]
+            car = CarModel.objects.get(pk=car_id)
+
+            review = {}
+            review["id"] = dealer_id
+            review["name"] = username
+            review["dealership"] = dealer_id
+            review["review"] = request.POST['content']
+            review["purchase"] = was_purchased
+            review["purchase_date"] = request.POST['purchasedate']
+            review["car_make"] = car.make.name
+            review["car_model"] = car.name
+            review["car_year"] = car.year.strftime("%Y")
+            json_payload = {}
+            json_payload["review"] = review
+            response = post_request(url, json_payload['review'], dealer_id=json_payload['review']['dealership'])
+            return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
